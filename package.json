@@ -1,7 +1,8 @@
 {
-  "name": "webbreakdown",
-  "private": true,
-  "version": "0.0.0",
+  "name": "awebsite1",
+  "author": "@swpw",
+  "private": false,
+  "version": "1.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,7 +11,8 @@
   "dependencies": {
     "gsap": "^3.10.4",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
