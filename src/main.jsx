@@ -3,14 +3,13 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-// Components, Pages
-import Home from './pages/Home'
-import Header from './components/Header/Header'
-import Footer from './components/Footer/Footer'
-
 // Styling
-import './index.scss'
+import './styles/_default.scss'
 
+// Components, Pages
+import { Home } from './pages/Home'
+import { Header } from './components/Header/Header'
+import { Footer } from './components/Footer/Footer'
 
 
 /* Code */

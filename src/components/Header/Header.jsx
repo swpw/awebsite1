@@ -5,7 +5,7 @@ import css from './Header.module.scss'
 
 
 /* Code */
-function Header() {
+export const Header = () => {
     const [count, setCount] = useState(0)
 
     return (
@@ -17,5 +17,3 @@ function Header() {
         </header>
     )
 }
-
-export default Header
