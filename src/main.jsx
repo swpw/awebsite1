@@ -14,28 +14,28 @@ import { Footer } from './components/Footer/Footer'
 
 /* Code */
 const routes = [
-    { path: '/', Component: Home }
+  { path: '/', Component: Home }
 ]
 
 const App = () => (
-    <Router>
-        <Header />
-        <Routes>
-            {
-                routes.map(({ path, Component }) => (
-                    <Route key={path} exact path={path} element={<Component />} />
-                ))
-            }
-        </Routes>
-        <Footer />
-    </Router>
+  <Router>
+    <Header />
+    <Routes>
+      {
+        routes.map(({ path, Component }) => (
+          <Route key={path} exact path={path} element={<Component />} />
+        ))
+      }
+    </Routes>
+    <Footer />
+  </Router>
 )
 
 
 
 // Init
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 )

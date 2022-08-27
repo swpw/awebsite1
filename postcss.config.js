@@ -1,8 +1,8 @@
 module.exports = {
-	plugins: [
-	  require('autoprefixer'),
-	  require('cssnano'),
-	  require('postcss-preset-env'),
-	  require('postcss-pxtorem'),
-	]
-  }
+  plugins: [
+    require('autoprefixer'),
+    require('cssnano'),
+    require('postcss-preset-env'),
+    require('postcss-pxtorem'),
+  ]
+}
