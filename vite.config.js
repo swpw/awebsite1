@@ -14,8 +14,8 @@ export default ViteConfigInput => {
       modules: {
         localConvention: 'camelCase',
         generateScopedName,
-      }
+      },
     },
-    base: './'
+    base: './',
   })
 }
