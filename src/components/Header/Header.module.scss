@@ -1,3 +1,26 @@
-.header{
-	
+@import "../../styles/variables.scss";
+
+.header {
+  position: relative;
+  z-index: 100;
+  //
+  visibility: hidden;
+
+  .headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3.2rem 4.8rem 0;
+
+    .headerLogo {
+      font-family: $ffamily-header;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 150%;
+      font-size: 2.4rem;
+      color: $color1;
+      user-select: none;
+      z-index: 2;
+    }
+  }
 }
