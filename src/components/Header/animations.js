@@ -49,6 +49,10 @@ export const gsap_buttonClose = (target, time) => {
 			duration: time,
 			ease: Power3.easeOut
 		}, 'end')
+		.to([target.children], {
+			duration: 0,
+			clearProps: 'all',
+		})
 }
 
 export const gsap_fouc = target => {

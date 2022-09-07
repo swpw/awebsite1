@@ -6,23 +6,19 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 // Styling
 import './styles/_default.scss'
 
-// Components, Pages
-import { Home } from './pages/Home'
+// Components, Pages, Hooks
 import { Header } from './components/Header/Header'
 import { Footer } from './components/Footer/Footer'
+import { getRoutes } from './hooks/getRoutes' // Get pages
 
 
 /* Code */
-const routes = [
-  { path: '/', Component: Home }
-]
-
 const App = () => (
   <Router>
     <Header />
     <Routes>
       {
-        routes.map(({ path, Component }) => (
+        getRoutes().map(({ path, Component }) => (
           <Route key={path} exact path={path} element={<Component />} />
         ))
       }

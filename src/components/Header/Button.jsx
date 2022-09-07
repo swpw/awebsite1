@@ -13,7 +13,7 @@ export const Button = ({ isMenuOpen, setIsMenuOpen }) => {
 	}, [isMenuOpen])
 
 	return (
-		<button className={css.Button} ref={el => buttonRef = el} onClick={() => setIsMenuOpen(prev => !prev)}>
+		<button className={css.button} ref={el => buttonRef = el} onClick={() => setIsMenuOpen(prev => !prev)}>
 			<div></div>
 			<div></div>
 			<div></div>
