@@ -6,13 +6,15 @@
   position: relative;
   z-index: 2;
 
-  &:hover {
-    > div:nth-child(1) {
-      top: -0.2rem;
-    }
+  &:not([disabled]) {
+    &:hover {
+      > div:nth-child(1) {
+        top: -0.2rem;
+      }
 
-    > div:nth-child(3) {
-      bottom: -0.2rem;
+      > div:nth-child(3) {
+        bottom: -0.2rem;
+      }
     }
   }
 

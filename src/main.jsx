@@ -10,20 +10,22 @@ import './styles/_default.scss'
 import { Header } from './components/Header/Header'
 import { Footer } from './components/Footer/Footer'
 import { getRoutes } from './hooks/getRoutes' // Get pages
-
+import { AnimateRootProvider } from './context/AnimateRootContext' // Provide Ref of animatable elements
 
 /* Code */
 const App = () => (
   <Router>
-    <Header />
-    <Routes>
-      {
-        getRoutes().map(({ path, Component }) => (
-          <Route key={path} exact path={path} element={<Component />} />
-        ))
-      }
-    </Routes>
-    <Footer />
+    <AnimateRootProvider>
+      <Header />
+      <Routes>
+        {
+          getRoutes().map(({ path, Component }) => (
+            <Route key={path} exact path={path} element={<Component />} />
+          ))
+        }
+      </Routes>
+      <Footer />
+    </AnimateRootProvider>
   </Router>
 )
 

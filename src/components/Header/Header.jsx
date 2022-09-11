@@ -16,7 +16,7 @@ export const Header = () => {
   let location = useLocation()
 
   useEffect(() => {
-    // Avoide 'flash of unstyled content' (FOUC) 
+    // Avoid 'flash of unstyled content' (FOUC) 
     gsap_fouc(headerRef)
     // Reveal Menu from outside of page view
     gsap_revealHeader(headerRef)
