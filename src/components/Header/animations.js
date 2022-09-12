@@ -73,18 +73,33 @@ export const gsap_revealHeader = target => {
 	})
 }
 
-export const gsap_openMenu = target => {
-	gsap.to(target, {
-		autoAlpha: 1,
-		duration: .6,
-		ease: Power3.easeInOut
-	})
+export const gsap_openMenu = (menu, container) => {
+	gsap.timeline()
+		.to(['body', 'html'], {
+			css: { overflow: 'hidden' },
+			duration: 0,
+		})
+		.fromTo([menu, container], {
+			autoAlpha: 1,
+			clipPath: 'inset(0% 0% 0% 100%)',
+		}, {
+			clipPath: 'inset(0% 0% 0% 0%)',
+			duration: .75,
+			stagger: .15,
+			ease: Power3.easeInOut
+		})
 }
 
-export const gsap_closeMenu = target => {
-	gsap.to(target, {
-		autoAlpha: 0,
-		duration: .6,
-		ease: Power3.easeInOut
-	})
+export const gsap_closeMenu = (menu, container) => {
+	gsap.timeline()
+		.to([menu, container], {
+			clipPath: 'inset(0% 0% 0% 100%)',
+			duration: .75,
+			stagger: -.15,
+			ease: Power3.easeInOut
+		})
+		.to(['body', 'html'], {
+			css: { overflow: 'hidden' },
+			duration: 0,
+		})
 }
