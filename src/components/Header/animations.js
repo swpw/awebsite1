@@ -103,3 +103,56 @@ export const gsap_closeMenu = (menu, container) => {
 			duration: 0,
 		})
 }
+
+export const gsap_headerLinkHover = ({ timeline: tl, target }, setSplittedText, kill = false) => {
+	const duration = .25,
+		delay = index => index * .015,
+		ease = Power3.easeInOut
+
+	if (kill) {
+		// Pause previous onMouseEnter animation
+		tl.forEach(el => el.pause())
+
+		// Cancel animation: reverse animation onMouseLeave
+		target.chars.forEach((char, index) => {
+			gsap.timeline()
+				.to(char, {
+					y: 0,
+					duration,
+					delay: delay(index),
+					ease,
+				})
+		})
+
+		return
+	}
+
+	// 'temp timeline array'
+	let tempTlContainer = []
+	target.chars.forEach((char, index) => {
+		// Main animation
+		const charTl = gsap.timeline()
+			.fromTo(char, {
+				y: 0,
+			}, {
+				y: -5,
+				duration,
+				delay: delay(index),
+				ease,
+			})
+			.to(char, {
+				y: 0,
+				duration,
+				ease
+			})
+
+		// Add each 'char timeline' to 'temp timeline array'
+		tempTlContainer = [...tempTlContainer, charTl]
+	})
+
+	// Modify timeline with 'temp timeline array'
+	setSplittedText(prev => ({
+		timeline: tempTlContainer,
+		target
+	}))
+}
