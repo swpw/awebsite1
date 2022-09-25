@@ -1,4 +1,7 @@
-import { gsap, Power3 } from "gsap";
+import { gsap, Power3, Bounce } from "gsap";
+import { CSSRulePlugin } from "gsap/CSSRulePlugin";
+
+gsap.registerPlugin(CSSRulePlugin);
 
 export const gsap_buttonOpen = (target, time) => {
 	gsap.timeline()
@@ -104,25 +107,40 @@ export const gsap_closeMenu = (menu, container) => {
 		})
 }
 
-export const gsap_headerLinkHover = ({ timeline: tl, target }, setSplittedText, kill = false) => {
+export const gsap_headerLinkHover = ({ timeline: tl, timelinePseudo: tl_pseudo, target }, setSplittedText, kill = false) => {
 	const duration = .25,
 		delay = index => index * .015,
 		ease = Power3.easeInOut
 
+	// Pseudo Element target reference
+	const targetPseudo = CSSRulePlugin.getRule(`.${target.splitted.className}::after`)
+
 	if (kill) {
 		// Pause previous onMouseEnter animation
 		tl.forEach(el => el.pause())
+		tl_pseudo.pause()
 
 		// Cancel animation: reverse animation onMouseLeave
 		target.chars.forEach((char, index) => {
 			gsap.timeline()
 				.to(char, {
 					y: 0,
+					immediateRender: false,
 					duration,
 					delay: delay(index),
 					ease,
 				})
 		})
+
+		gsap.timeline()
+			.to(targetPseudo, {
+				cssRule: {
+					left: 0,
+				},
+				immediateRender: false,
+				duration: duration + .15,
+				ease,
+			})
 
 		return
 	}
@@ -150,9 +168,31 @@ export const gsap_headerLinkHover = ({ timeline: tl, target }, setSplittedText, 
 		tempTlContainer = [...tempTlContainer, charTl]
 	})
 
+	/* Animate pseudo element border */
+	const pseudoTl = gsap.timeline()
+		.to(targetPseudo, {
+			cssRule: {
+				left: '100%',
+			},
+			duration,
+			ease,
+		})
+		.fromTo(targetPseudo, {
+			left: '-100%',
+		}, {
+			cssRule: {
+				left: 0,
+			},
+			immediateRender: false,
+			duration,
+			delay: .15,
+			ease,
+		})
+
 	// Modify timeline with 'temp timeline array'
 	setSplittedText(prev => ({
 		timeline: tempTlContainer,
+		timelinePseudo: pseudoTl,
 		target
 	}))
 }

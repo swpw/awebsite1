@@ -46,7 +46,7 @@ export const Header = () => {
       <div className={css.headerContainer}>
         <Link className={css.headerLogo} to="/">snp</Link>
         <div className={css.headerSideContainer}>
-          <Link className={css.headerLink}
+          <Link className={css.headerLinkTest}
             to="/contact"
             ref={el => headerLinkRef = el}
             onMouseEnter={handleLinkEnter}
