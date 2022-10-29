@@ -3,7 +3,8 @@
 .nav {
   height: 100vh;
   width: 100%;
-  background: red;
+  background: #e96d6d;
+  background: linear-gradient(45deg, #e96d6d, #dc6e5a, #9c526d);
   position: fixed;
   top: 0;
   left: 0;
@@ -14,7 +15,7 @@
   .navContainer {
     height: 100vh;
     width: 100%;
-    background: blue;
+    background: linear-gradient(135deg, #87dceb, #879eeb, #9070d0);
     position: relative;
     top: 0;
     left: 0;
@@ -28,6 +29,22 @@
     font-size: 3.2rem;
     line-height: 150%;
     font-weight: 700;
+
+    .navCanvasBg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: url("https://cdn.pixabay.com/photo/2016/03/23/22/41/honeycomb-1275805_1280.png")
+        center center / cover no-repeat;
+
+      .navCanvas {
+        width: 100%;
+        height: 100%;
+      }
+    }
 
     a {
       color: #fff;

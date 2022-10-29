@@ -27,9 +27,9 @@ export const Header = () => {
 
   useEffect(() => {
     // Avoid 'flash of unstyled content' (FOUC) 
-    gsap_fouc(headerRef)
+    gsap_fouc(headerRef.current)
     // Reveal Menu from outside of page view
-    gsap_revealHeader(headerRef)
+    gsap_revealHeader(headerRef.current)
     // Split header link text
     setSplittedText({
       timeline: [],
@@ -42,7 +42,7 @@ export const Header = () => {
     setIsMenuOpen(false), [location])
 
   return (
-    <header className={css.header} ref={el => headerRef = el}>
+    <header className={css.header} ref={headerRef}>
       <div className={css.headerContainer}>
         <Link className={css.headerLogo} to="/">snp</Link>
         <div className={css.headerSideContainer}>
@@ -55,7 +55,7 @@ export const Header = () => {
           <Button isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
         </div>
       </div>
-      <Menu isMenuOpen={isMenuOpen} />
+      <Menu headerRef={headerRef} isMenuOpen={isMenuOpen} />
     </header>
   )
 }
