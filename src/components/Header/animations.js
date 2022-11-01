@@ -77,11 +77,9 @@ export const gsap_revealHeader = target => {
 }
 
 export const gsap_openMenu = (menu, container) => {
+	gsap.set('html', { overflow: 'hidden' })
+
 	gsap.timeline()
-		.to(['body', 'html'], {
-			css: { overflow: 'hidden' },
-			duration: 0,
-		})
 		.fromTo([menu, container], {
 			autoAlpha: 1,
 			clipPath: 'inset(0% 0% 0% 100%)',
@@ -94,16 +92,14 @@ export const gsap_openMenu = (menu, container) => {
 }
 
 export const gsap_closeMenu = (menu, container) => {
-	gsap.timeline()
+	gsap.timeline({
+		onComplete: () => gsap.set('html', { overflow: '' })
+	})
 		.to([menu, container], {
 			clipPath: 'inset(0% 0% 0% 100%)',
 			duration: .75,
 			stagger: -.15,
 			ease: Power3.easeInOut
-		})
-		.to(['body', 'html'], {
-			css: { overflow: 'hidden' },
-			duration: 0,
 		})
 }
 
