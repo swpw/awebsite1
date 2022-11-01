@@ -57,6 +57,7 @@ export const Menu = ({ headerRef, isMenuOpen }) => {
 					animacja przejścia między jednym a drugim zdjęciem - type2 aka 'Opacity / Blur'
 				
 				JEŚLI CZĘŚĆ KONTENTU ZOSTAŁA JUŻ WŁĄCZONA (timeout 1s state):
+				(ustawić jakiś generalnie state na kontrolowanie tego dla prostoty i czytelnosci)
 					WYŁĄCZYĆ
 						wyłączyć ponownie kontent który został odkryty
 
