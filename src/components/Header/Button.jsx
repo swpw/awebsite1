@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, forwardRef } from 'react'
 import css from './Button.module.scss'
 
 import { getAnimateRoot } from '../../context/AnimateRootContext';
@@ -6,10 +6,9 @@ import { gsap_buttonOpen, gsap_buttonClose } from './animations';
 import { gsap_translateRoot } from '../../pages/animations';
 
 
-export const Button = ({ isMenuOpen, setIsMenuOpen }) => {
+export const Button = forwardRef(({ isMenuOpen, setIsMenuOpen }, ref) => {
 	const [isMenuDisabled, setIsMenuDisabled] = useState(false)
 
-	let buttonRef = useRef(null)
 	const animateRootRef = getAnimateRoot()
 
 	const handleButton = () => {
@@ -17,7 +16,7 @@ export const Button = ({ isMenuOpen, setIsMenuOpen }) => {
 			const disabledTimeout = 800
 
 			setIsMenuDisabled(true)
-			setIsMenuOpen(prev => !prev)
+			setIsMenuOpen(prev => ({ state: !prev.state, clicked: true }))
 
 			setTimeout(() =>
 				setIsMenuDisabled(false), disabledTimeout)
@@ -25,18 +24,18 @@ export const Button = ({ isMenuOpen, setIsMenuOpen }) => {
 	}
 
 	useEffect(() => {
-		if (isMenuOpen) {
-			gsap_buttonOpen(buttonRef, .2)
+		if (isMenuOpen.state) {
+			gsap_buttonOpen(ref.current, .2)
 			gsap_translateRoot(animateRootRef, true)
 		} else {
-			gsap_buttonClose(buttonRef, .2)
+			gsap_buttonClose(ref.current, .2)
 			gsap_translateRoot(animateRootRef, false)
 		}
 	}, [isMenuOpen])
 
 	return (
 		<button className={css.button}
-			ref={el => buttonRef = el}
+			ref={ref}
 			onClick={handleButton}
 			disabled={isMenuDisabled}
 		>
@@ -45,4 +44,4 @@ export const Button = ({ isMenuOpen, setIsMenuOpen }) => {
 			<div></div>
 		</button>
 	)
-}
+})

@@ -10,6 +10,8 @@ export class CanvasHandler {
 		this.arcRadius = data.arcRadius
 		this.arcBlur = data.arcBlur
 
+		this.pauseCanvas = data.pauseCanvas
+
 		this.draw()
 
 		this.root.addEventListener('mousemove', ({ clientX: x, clientY: y }) =>
@@ -34,9 +36,13 @@ export class CanvasHandler {
 
 		this.maskCtx.fillStyle = fill
 		this.maskCtx.fillRect(0, 0, window.innerWidth, window.innerHeight)
-		this.maskCtx.globalCompositeOperation = 'xor'
-		this.maskCtx.arc(x, y, this.arcRadius, 0, 2 * Math.PI)
-		this.maskCtx.filter = `blur(${this.arcBlur}px)`
+
+		if (this.pauseCanvas) {
+			this.maskCtx.globalCompositeOperation = 'xor'
+			this.maskCtx.arc(x, y, this.arcRadius, 0, 2 * Math.PI)
+			this.maskCtx.filter = `blur(${this.arcBlur}px)`
+		}
+
 		this.maskCtx.fill()
 
 		this.ctx.drawImage(this.maskCanvas, 0, 0)
@@ -47,5 +53,9 @@ export class CanvasHandler {
 		this.canvas.height = window.innerHeight
 		this.maskCanvas.width = this.canvas.width
 		this.maskCanvas.height = this.canvas.height
+	}
+
+	set setPauseCanvas(pauseCanvas) {
+		this.pauseCanvas = pauseCanvas
 	}
 }

@@ -6,17 +6,22 @@ import { gsap } from "gsap";
 import { Menu } from './Menu';
 import { Button } from './Button';
 
-import { gsap_fouc, gsap_revealHeader, gsap_headerLinkHover } from './animations';
+import { gsap_fouc, gsap_revealHeader, gsap_headerLinkHover, changeNavColor } from './animations';
 import SplitTextJS from 'split-text-js';
 
 
 
 export const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState({
+    state: false,
+    clicked: false
+  })
   const [splittedText, setSplittedText] = useState({})
 
   let headerRef = useRef(null)
   let headerLinkRef = useRef(null)
+  let logoRef = useRef(null)
+  let buttonRef = useRef(null)
   let location = useLocation()
 
   const handleLinkEnter = ({ target }) =>
@@ -39,20 +44,35 @@ export const Header = () => {
 
   // Hide menu when path changes
   useEffect(() =>
-    setIsMenuOpen(false), [location])
+    setIsMenuOpen({ state: false, clicked: false }), [location])
+
+  // Change nav color when open
+  useEffect(() => {
+    isMenuOpen.clicked &&
+      changeNavColor({
+        state: isMenuOpen.state,
+        logo: logoRef,
+        link: headerLinkRef,
+        button: buttonRef.current,
+      })
+  }, [isMenuOpen])
 
   return (
     <header className={css.header} ref={headerRef}>
       <div className={css.headerContainer}>
-        <Link className={css.headerLogo} to="/">snp</Link>
+        <span className={css.overflowHide}>
+          <Link className={css.headerLogo} to="/" ref={el => logoRef = el}>Digital Agency</Link>
+        </span>
         <div className={css.headerSideContainer}>
-          <Link className={css.headerLinkTest}
-            to="/contact"
-            ref={el => headerLinkRef = el}
-            onMouseEnter={handleLinkEnter}
-            onMouseLeave={handleLinkLeave}
-          >Let's talk</Link>
-          <Button isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+          <span className={css.overflowHide}>
+            <Link className={css.headerLinkTest}
+              to="/contact"
+              ref={el => headerLinkRef = el}
+              onMouseEnter={handleLinkEnter}
+              onMouseLeave={handleLinkLeave}
+            >Let's talk</Link>
+          </span>
+          <Button ref={buttonRef} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
         </div>
       </div>
       <Menu headerRef={headerRef} isMenuOpen={isMenuOpen} />

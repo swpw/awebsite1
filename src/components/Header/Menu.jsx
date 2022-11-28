@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom';
 import css from './Menu.module.scss'
 
@@ -14,7 +14,14 @@ import { gsap } from "gsap";
 
 export const Menu = ({ headerRef, isMenuOpen }) => {
 	const [canvas, setCavnas] = useState(null)
-	const [isNewFirstImgEntry, setIsNewFirstImgEntry] = useState(null)
+	const [pauseCanvas, setPauseCanvas] = useState(true)
+	const [offsetImage, setOffsetImage] = useState(null)
+	const [linkEntry, setLinkEntry] = useState({
+		eventType: null, // enter link, leave link, leave list
+		nthEntry: null, // 0 = first entry, 1 = second entry
+		target: null
+	})
+	const [linkTimeout, setLinkTimeout] = useState(null)
 
 	let menuRef = useRef(null)
 	let containerRef = useRef(null)
@@ -22,106 +29,169 @@ export const Menu = ({ headerRef, isMenuOpen }) => {
 	let imgListRef = useRef(null)
 	let contactWrapperRef = useRef(null)
 	let linksListRef = useRef(null)
-
-	const linksEnterHandler = (e) => {
-		console.log(e)
-		const current = e.currentTarget
-
-		const links = [...linksListRef.current.querySelectorAll('a')]
-		const excludedLinks = links
-			.map(el => el.getAttribute('data-index') !== current.getAttribute('data-index') && el)
-			.filter(el => el !== false)
-
-		// [ul children].indexOf(li)
-		const imgIndex = [...current.parentNode.parentNode.children].indexOf(current.parentNode)
-
-
-		/*
-		SPRAWDZIĆ CZY TO JEST PIERWSZE NAJECHANIE NA JAKIKOLWIEK LINK CZY
-		PRZECHODZI ON Z POPRZEDNIEGO LINKU:
-
-			JEŚLI JEST TO PIERWSZE TO:
-				WYŁĄCZYĆ:
-					wszystkie linki oprócz tego, który jest aktywny(mouseenter)
-					sekcja kontaktowa z lewego dolnego rogu
-					animacje tła w tle na ruszanie myszki
-				WŁĄCZYĆ:
-					animacje przejścia zdjęcia - type1 aka 'Clip path'
-				USTAWIĆ:
-					state isNewFirstImgEntry jako taki, który dostał już
-						pierwsze wejśćie, a każde inne będzie przenosiło do
-						stanu KOLEJNEGO PRZEJŚCIA (state = 1)
-
-			JEŚLI JEST TO KOLEJNE PRZEJŚCIE TO
-				WŁĄCZYĆ:
-					animacja przejścia między jednym a drugim zdjęciem - type2 aka 'Opacity / Blur'
-				
-				JEŚLI CZĘŚĆ KONTENTU ZOSTAŁA JUŻ WŁĄCZONA (timeout 1s state):
-				(ustawić jakiś generalnie state na kontrolowanie tego dla prostoty i czytelnosci)
-					WYŁĄCZYĆ
-						wyłączyć ponownie kontent który został odkryty
-
-				ZMIENIĆ:
-					usunąć timeout z linksLeaveHandler
-		*/
-
-		// console.log(e, excludedLinks, imgIndex)
-	}
-
-	const linksLeaveHandler = e => {
-		/*
-		USTAWIĆ TIMEOUT NA DAJMY NA TO 2 SEKUNDY:
-			PO UPŁYWIE CZASU:
-				1 SEKUNDA:
-					WŁĄCZYĆ:
-						wszystkie linki oprócz tego, który jest aktywny(mouseenter) bo już jest aktywny duuh
-						sekcja kontaktowa z lewego dolnego rogu
-				2 SEKUNDY:
-					WŁĄCZYĆ:
-						animacje tła w tle na ruszanie myszki
-					WYŁĄCZYĆ:
-						aktywne zdjęcie - type1 ala 'Clip path
-		 */
-	}
-
-	const linksListLeaveHandler = e => {
-		/*
-		NATYCHMIASTOWO:
-			WŁĄCZYĆ:
-						wszystkie linki oprócz tego, który jest aktywny(mouseenter) bo już jest aktywny duuh
-						sekcja kontaktowa z lewego dolnego rogu
-						animacje tła w tle na ruszanie myszki
-			WYŁĄCZYĆ:
-				aktywne zdjęcie - type1 ala 'Clip path
-				timeout z linksLeaveHandler'a
-			USTAWIĆ:
-					state isNewFirstImgEntry jako taki, który może dostać
-						ponownie pierwsze wejście (state = 0)
-		*/
-	}
+	let links = React.useRef(null)
+	let mailRef = React.useRef(null)
+	let phoneRef = React.useRef(null)
+	let addressRef = React.useRef(null)
+	let socialsListRef = React.useRef(null)
 
 	useEffect(() => {
-		isMenuOpen ? gsap_openMenu(menuRef, containerRef) : gsap_closeMenu(menuRef, containerRef)
+		const elements = {
+			menu: menuRef,
+			container: containerRef,
+			links_list: linksListRef,
+			link_itemName: css.linkItem,
+			link_name: css.link,
+			link_spanName: css.linkSpan,
+			mail: mailRef,
+			phone: phoneRef,
+			address: addressRef,
+			socials: socialsListRef,
+		}
+
+		isMenuOpen.state ? gsap_openMenu(elements) : gsap_closeMenu(elements)
 	}, [isMenuOpen])
 
 	useEffect(() => setCavnas(new CanvasHandler({
 		root: headerRef.current,
 		canvas: canvasRef.current,
-		fill: ['#87dceb', '#879eeb', '#9070d0'],
+		fill: ['#0e1529', '#221a2a', '#2c1f0f'],
 		arcRadius: 40,
-		arcBlur: 80
+		arcBlur: 80,
+		pauseCanvas
 	})), [])
 
 	useEffect(() => {
-		const links = [...linksListRef.current.querySelectorAll('a')]
+		if (canvas) canvas.setPauseCanvas = pauseCanvas
+	}, [pauseCanvas])
 
-		links.forEach(el => {
-			el.addEventListener('mouseleave', linksLeaveHandler)
-			el.addEventListener('mouseenter', linksEnterHandler)
+	useEffect(() => {
+		links.current = [...linksListRef.querySelectorAll('a')]
+
+		const linkEnterEventHandler = ({ currentTarget: target }) => {
+			setLinkEntry(prev => ({
+				eventType: 'enter',
+				nthEntry: prev.nthEntry === null ? 0 : 1,
+				target
+			}))
+		}
+
+		const linkLeaveEventHandler = ({ currentTarget: target }) => {
+			setLinkEntry(prev => ({
+				eventType: 'leave-link',
+				nthEntry: prev.nthEntry,
+				target
+			}))
+		}
+
+		const linkListLeaveEventHandler = ({ currentTarget: target }) => {
+			setLinkEntry(prev => ({
+				eventType: 'leave-list',
+				nthEntry: null,
+				target
+			}))
+		}
+
+		links.current.forEach(el => {
+			el.addEventListener('mouseenter', linkEnterEventHandler)
+			el.addEventListener('mouseleave', linkLeaveEventHandler)
 		})
 
-		linksListRef.current.addEventListener('mouseleave', linksListLeaveHandler)
-	}, [])
+		linksListRef.addEventListener('mouseleave', linkListLeaveEventHandler)
+
+		// Unmount (prevents double event mount via react 18)
+		return (() => {
+			links.current &&
+				links.current.forEach(el => {
+					el.removeEventListener('mouseenter', linkEnterEventHandler)
+					el.removeEventListener('mouseleave', linkLeaveEventHandler)
+				})
+
+			linksListRef &&
+				linksListRef.removeEventListener('mouseleave', linkListLeaveEventHandler)
+		})
+	}, [linksListRef])
+
+	useEffect(() => {
+		linkEntry.eventType === 'enter' && linkEnterHandler()
+		linkEntry.eventType === 'leave-link' && linkLeaveHandler()
+		linkEntry.eventType === 'leave-list' && linkListLeaveHandler()
+	}, [linkEntry])
+
+	function linkEnterHandler() {
+		const current = linkEntry.target
+
+		const excludedLinks = links.current.map(el =>
+			el.getAttribute('data-index') !== current.getAttribute('data-index') && el)
+			.filter(el => el !== false)
+
+		// [ul children].indexOf(li) // Index of entered link
+		const imgIndex = [...current.parentNode.parentNode.children].indexOf(current.parentNode)
+
+		if (linkEntry.nthEntry === 0) {
+			gsap.set([excludedLinks, contactWrapperRef], { autoAlpha: 0 })
+			gsap.set(imgListRef.querySelectorAll('img')[imgIndex], { autoAlpha: 1 })
+			setPauseCanvas(false)
+		} else {
+			clearTimeout(linkTimeout)
+			setLinkTimeout(null)
+
+			gsap.set(excludedLinks, { autoAlpha: 0 })
+			gsap.set(imgListRef.querySelectorAll('img')[imgIndex], { autoAlpha: 1 })
+		}
+	}
+
+	function linkLeaveHandler() {
+		const current = linkEntry.target
+
+		const excludedLinks = links.current.map(el =>
+			el.getAttribute('data-index') !== current.getAttribute('data-index') && el)
+			.filter(el => el !== false)
+
+		// [ul children].indexOf(li) // Index of entered link
+		const imgIndex = [...current.parentNode.parentNode.children].indexOf(current.parentNode)
+
+		const imgTemp = imgListRef.querySelectorAll('img')[imgIndex]
+		const contactWrapperTemp = contactWrapperRef
+
+		gsap.set(imgListRef.querySelectorAll('img'), { autoAlpha: 0 })
+		gsap.set([excludedLinks], { autoAlpha: 1 })
+
+		const timeout = setTimeout(() => {
+			gsap.set(imgTemp, { autoAlpha: 0 })
+			gsap.set(contactWrapperTemp, { autoAlpha: 1 })
+			setPauseCanvas(true)
+			setLinkTimeout(null)
+		}, 2000)
+
+		setLinkTimeout(timeout)
+	}
+
+	function linkListLeaveHandler() {
+		if (linkTimeout !== null) {
+			clearTimeout(linkTimeout)
+			setLinkTimeout(null)
+		}
+
+		setPauseCanvas(true)
+
+		const current = linkEntry.target
+
+		const excludedLinks = links.current.map(el =>
+			el.getAttribute('data-index') !== current.getAttribute('data-index') && el)
+			.filter(el => el !== false)
+
+		gsap.set([excludedLinks], { autoAlpha: 1 })
+		gsap.set(imgListRef.querySelectorAll('img'), { autoAlpha: 0 })
+		gsap.set(contactWrapperRef, { autoAlpha: 1 })
+	}
+
+	const data_mail = 'contact@company.com'
+	const data_phone = '(503) 874-6487'
+	const data_address = [
+		'74th E Brighton Woods St, Ste 1293',
+		'New York, NY 12013, USA'
+	]
 
 	return (
 		<nav className={css.nav} ref={el => menuRef = el}>
@@ -129,7 +199,7 @@ export const Menu = ({ headerRef, isMenuOpen }) => {
 				<div className={css.navCanvasBg}>
 					<canvas className={css.navCanvas} ref={canvasRef}></canvas>
 				</div>
-				<ul className={css.imgList} ref={imgListRef}>
+				<ul className={css.imgList} ref={el => imgListRef = el}>
 					{
 						getRoutes().map(({ Component: { name }, img }) => (
 							<li className={css.imgItem} key={name}>
@@ -140,21 +210,28 @@ export const Menu = ({ headerRef, isMenuOpen }) => {
 				</ul>
 
 				<div className={css.navWrapper}>
-					<div className={css.contactWrapper} ref={contactWrapperRef}>
+					<div className={css.contactWrapper} ref={el => contactWrapperRef = el}>
 						<address className={css.physicalAddress}>
 							<ul>
 								<li>
-									<a className={css.addressLink} href="mailto:contact@company.com">contact@company.com</a>
+									<a className={css.addressLink} href="mailto:contact@company.com" ref={el => mailRef = el}>
+										<span className={css.mailLinkSpan} data-text={data_mail}>{data_mail}</span>
+									</a>
 								</li>
 								<li>
-									<a className={css.addressLink} href="tel:(503) 874-6487">(503) 874-6487</a>
+									<a className={css.addressLink} href="tel:(503) 874-6487" ref={el => phoneRef = el}>
+										<span className={css.phoneLinkSpan} data-text={data_phone}>{data_phone}</span>
+									</a>
 								</li>
 								<li>
-									<p className={css.addressText}>74th E Brighton Woods St, Ste 1293<br />New York, NY 12013, USA</p>
+									<p className={css.addressText} ref={el => addressRef = el}>
+										<span className={css.addressLinkSpan} data-text={data_address[0]}>{data_address[0]}</span>
+										<span className={css.addressLinkSpan} data-text={data_address[1]}>{data_address[1]}</span>
+									</p>
 								</li>
 							</ul>
 						</address>
-						<address className={css.socialAddress}>
+						<address className={css.socialAddress} ref={el => socialsListRef = el}>
 							<ul>
 								{
 									getSocials().map(({ title, url, icon }) => (
@@ -168,11 +245,15 @@ export const Menu = ({ headerRef, isMenuOpen }) => {
 							</ul>
 						</address>
 					</div>
-					<ul className={css.linkList} ref={linksListRef}>
+					<ul className={css.linkList} ref={el => linksListRef = el}>
 						{
 							getRoutes().map(({ path, Component: { name }, title }, index) => (
 								<li className={css.linkItem} key={name}>
-									<Link data-index={romanize(index + 1)} className={css.link} to={path}>{title}</Link>
+									<Link data-index={romanize(index + 1)} className={css.link} to={path}>
+										<span className={css.linkSpanWrapper}>
+											<span data-text={title} className={css.linkSpan}>{title}</span>
+										</span>
+									</Link>
 								</li>
 							))
 						}

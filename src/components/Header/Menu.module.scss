@@ -3,8 +3,7 @@
 .nav {
   height: 100vh;
   width: 100%;
-  background: #e96d6d;
-  background: linear-gradient(45deg, #e96d6d, #dc6e5a, #9c526d);
+  background: linear-gradient(45deg, #372e72, #6e59f3);
   position: fixed;
   top: 0;
   left: 0;
@@ -15,7 +14,7 @@
   .navContainer {
     height: 100vh;
     width: 100%;
-    background: linear-gradient(135deg, #87dceb, #879eeb, #9070d0);
+    background: linear-gradient(45deg, #0e1529, #221a2a, #2c1f0f);
     position: relative;
     top: 0;
     left: 0;
@@ -37,7 +36,7 @@
       width: 100%;
       height: 100%;
       z-index: -1;
-      background: url("https://cdn.pixabay.com/photo/2016/03/23/22/41/honeycomb-1275805_1280.png")
+      background: url("https://media4.giphy.com/media/rcFs59ww1R7yeFszmo/giphy.gif?cid=ecf05e47txh2jc7xobv4bdxhhh085rxyyn51rovtqvhsrtwu&rid=giphy.gif&ct=g")
         center center / cover no-repeat;
 
       .navCanvas {
@@ -117,6 +116,8 @@
             gap: 0.8rem;
 
             li {
+              overflow: hidden;
+
               &:last-child {
                 margin-top: 0.8rem;
               }
@@ -128,7 +129,7 @@
                 font-weight: 600;
                 line-height: 150%;
                 font-size: 2.133rem;
-                color: $color2;
+                color: rgba(109, 89, 243, 0.2);
                 text-decoration: underline;
               }
 
@@ -139,7 +140,11 @@
                 font-weight: 400;
                 line-height: 150%;
                 font-size: 1.6rem;
-                color: $color1;
+                color: rgba(255, 255, 255, 0.2);
+
+                span {
+                  display: block;
+                }
               }
             }
           }
@@ -185,50 +190,96 @@
             font-weight: 700;
             line-height: 125%;
             font-size: clamp(5.052rem, 3vw + 1.6rem, 6.735rem);
-            color: $color1;
+            color: rgba(255 255 255 / 0.2);
             user-select: none;
             position: relative;
 
-            &::before {
-              content: attr(data-index);
-              position: absolute;
-              top: -0.8rem;
-              left: -1.6rem;
-              font-size: 1.4rem;
-              line-height: 100%;
-              font-weight: 900;
-              z-index: -1;
-              user-select: none;
-              pointer-events: none;
+            .linkSpanWrapper {
+              display: block;
+              overflow: hidden;
             }
           }
+        }
+      }
+    }
+  }
+}
 
-          &:first-child {
-            .link {
-              &::after {
-                content: "Menu";
-                position: absolute;
-                top: -0.8rem;
-                right: 0;
-                margin: auto 0;
-                text-transform: uppercase;
-                z-index: -1;
-                user-select: none;
-                pointer-events: none;
-                font-size: 1.4rem;
-                line-height: 100%;
-                font-weight: 900;
+@mixin pseudoSpan($color) {
+  position: relative;
+  display: block;
+  -webkit-text-size-adjust: none;
 
-                @media (min-width: 992px) {
-                  top: 0;
-                  bottom: 0;
-                  right: -4.8rem;
-                  writing-mode: vertical-lr;
-                  text-orientation: mixed;
-                }
-              }
-            }
-          }
+  &::before {
+    content: attr(data-text);
+    position: absolute;
+    top: unset !important;
+    bottom: unset !important;
+    right: unset !important;
+    left: unset !important;
+    inset: 0;
+    clip-path: inset(100% 0 0 0);
+    color: $color;
+  }
+}
+
+// Outside scope for easier gsap pseudoelement targeting
+.linkSpan {
+  @include pseudoSpan(#fff);
+}
+
+.mailLinkSpan {
+  @include pseudoSpan($color2);
+}
+
+.phoneLinkSpan {
+  @include pseudoSpan($color2);
+}
+
+.addressLinkSpan {
+  @include pseudoSpan(#fff);
+}
+
+.link {
+  &::before {
+    content: attr(data-index);
+    position: absolute;
+    top: -0.8rem;
+    left: -1.6rem;
+    font-size: 1.4rem;
+    line-height: 100%;
+    font-weight: 900;
+    z-index: -1;
+    user-select: none;
+    pointer-events: none;
+    color: #fff;
+  }
+}
+
+.linkItem {
+  &:first-child {
+    .link {
+      &::after {
+        content: "Menu";
+        position: absolute;
+        top: -0.8rem;
+        right: 0;
+        margin: auto 0;
+        text-transform: uppercase;
+        z-index: -1;
+        user-select: none;
+        pointer-events: none;
+        font-size: 1.4rem;
+        line-height: 100%;
+        font-weight: 900;
+        color: #fff;
+
+        @media (min-width: 992px) {
+          top: 0;
+          bottom: 0;
+          right: -4.8rem;
+          writing-mode: vertical-lr;
+          text-orientation: mixed;
         }
       }
     }

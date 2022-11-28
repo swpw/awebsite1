@@ -76,10 +76,20 @@ export const gsap_revealHeader = target => {
 	})
 }
 
-export const gsap_openMenu = (menu, container) => {
-	gsap.set('html', { overflow: 'hidden' })
+export const gsap_openMenu = ({ menu, container, links_list, link_itemName, link_name, link_spanName, mail, phone, address, socials }) => {
+	const links = links_list.querySelectorAll(`.${link_name}`)
+	const linksSpan = links_list.querySelectorAll(`.${link_spanName}`)
 
-	gsap.timeline()
+	const pseudoLinkIndex = CSSRulePlugin.getRule(`.${link_name}::before`)
+	const pseudoLinkMenu = CSSRulePlugin.getRule(`.${link_itemName}:first-child .${link_name}::after`)
+	const pseudoLinkSpan = CSSRulePlugin.getRule(`.${link_spanName}::before`)
+	const pseudoMailSpan = CSSRulePlugin.getRule(`.${mail.querySelector('span').className}::before`)
+	const pseudoPhoneSpan = CSSRulePlugin.getRule(`.${phone.querySelector('span').className}::before`)
+	const pseudoAddressSpan = CSSRulePlugin.getRule(`.${address.querySelector('span').className}::before`)
+
+	gsap.set('body', { overflowY: 'scroll', position: 'fixed' })
+
+	const tl = gsap.timeline()
 		.fromTo([menu, container], {
 			autoAlpha: 1,
 			clipPath: 'inset(0% 0% 0% 100%)',
@@ -88,12 +98,84 @@ export const gsap_openMenu = (menu, container) => {
 			duration: .75,
 			stagger: .15,
 			ease: Power3.easeInOut
-		})
+		}, 'first')
+		.fromTo(linksSpan, {
+			autoAlpha: 0,
+			yPercent: 100,
+			rotateZ: 8,
+		}, {
+			yPercent: 0,
+			rotateZ: 0,
+			autoAlpha: 1,
+			duration: 1,
+			stagger: .15,
+			ease: Power3.easeInOut
+		}, 'first')
+		.fromTo(pseudoLinkSpan, {
+			clipPath: 'inset(0% 100% 0% 0%)'
+		}, {
+			clipPath: 'inset(0% 0% 0% 0%)',
+			duration: .5,
+			ease: Power3.easeInOut
+		}, 'second')
+		.fromTo(pseudoLinkIndex, {
+			clipPath: 'inset(0% 100% 0% 0%)',
+		}, {
+			clipPath: 'inset(0% 0% 0% 0%)',
+			duration: .6,
+			delay: .2,
+			ease: Power3.easeInOut
+		}, 'second')
+		.fromTo(pseudoLinkMenu, {
+			clipPath: 'inset(100% 0% 0% 0%)',
+		}, {
+			clipPath: 'inset(0% 0% 0% 0%)',
+			duration: 1,
+			delay: .2,
+			ease: Power3.easeInOut
+		}, 'second')
+		.fromTo([mail, phone, address], {
+			autoAlpha: 0,
+			yPercent: 100,
+		}, {
+			yPercent: 0,
+			autoAlpha: 1,
+			duration: 1,
+			delay: -.3,
+			stagger: .05,
+			ease: Power3.easeInOut
+		}, 'second')
+		.fromTo(socials.querySelectorAll('li'), {
+			autoAlpha: 0,
+			yPercent: 40,
+		}, {
+			autoAlpha: 1,
+			yPercent: 0,
+			duration: .6,
+			delay: .1,
+			stagger: .03,
+			ease: Power3.easeInOut
+		}, 'second')
+
+	const addressMicoAnimation = (tl, target, delay = 0) => {
+		tl.fromTo(target, {
+			clipPath: 'inset(0 100% 0% 0%)',
+		}, {
+			clipPath: 'inset(0% 0% 0% 0%)',
+			duration: .7,
+			delay: delay,
+			ease: Power3.easeInOut
+		}, 'second')
+	}
+
+	addressMicoAnimation(tl, pseudoMailSpan)
+	addressMicoAnimation(tl, pseudoPhoneSpan, .1)
+	addressMicoAnimation(tl, pseudoAddressSpan, .2)
 }
 
-export const gsap_closeMenu = (menu, container) => {
+export const gsap_closeMenu = ({ menu, container, links_list, link_itemName, link_name, link_spanName }) => {
 	gsap.timeline({
-		onComplete: () => gsap.set('html', { overflow: '' })
+		onComplete: () => gsap.set('body', { overflowY: '', position: '' })
 	})
 		.to([menu, container], {
 			clipPath: 'inset(0% 0% 0% 100%)',
@@ -191,4 +273,34 @@ export const gsap_headerLinkHover = ({ timeline: tl, timelinePseudo: tl_pseudo, 
 		timelinePseudo: pseudoTl,
 		target
 	}))
+}
+
+export const changeNavColor = ({ state, logo, link, button }) => {
+	const border = CSSRulePlugin.getRule(`.${link.className}::after`)
+
+	const color = state ? '#fff' : '#232323'
+
+	const tl = gsap.timeline()
+		.fromTo([logo, link], {
+			xPercent: 0,
+		}, {
+			xPercent: 100,
+			duration: .5,
+			ease: Power3.easeIn,
+		}, 'start')
+		.to(button.children, {
+			background: color,
+			delay: () => state ? .2 : .5,
+			duration: 0,
+			ease: Power3.easeInOut,
+		}, 'start')
+		.set([logo, link], { color })
+		.set(border, { background: color })
+		.fromTo([logo, link], {
+			xPercent: -100,
+		}, {
+			xPercent: 0,
+			duration: .5,
+			ease: Power3.easeOut,
+		})
 }
