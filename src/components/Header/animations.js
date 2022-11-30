@@ -410,6 +410,10 @@ export const leaveLink = ({
 }) => {
 	// gsap.set(imgListRef.querySelectorAll('img'), { autoAlpha: 0 })
 	// gsap.set([excludedLinks], { autoAlpha: 1 })
+
+	// reset zindex of links, img
+	// reset pseudo clip path on excludedLinks (reset)
+	// lower alpha of image
 }
 
 export const leaveLinkTimeout = ({ data }) => {
