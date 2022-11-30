@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom';
 import css from './Menu.module.scss'
 
-import { gsap_openMenu, gsap_closeMenu, enterLinkFirst } from './animations';
+import { gsap_openMenu, gsap_closeMenu, enterLinkFirst, enterLinkNth, leaveLink, leaveLinkTimeout, leaveLinkList } from './animations';
 import { getRoutes } from '../../hooks/getRoutes'
 import { CanvasHandler } from './canvasHandler';
 import { romanize } from '../../hooks/romanize'
@@ -149,8 +149,9 @@ export const Menu = ({ headerRef, isMenuOpen }) => {
 			clearTimeout(linkTimeout)
 			setLinkTimeout(null)
 
-			gsap.set(excludedLinks, { autoAlpha: 0 })
-			gsap.set(imgListRef.querySelectorAll('img')[imgIndex], { autoAlpha: 1 })
+			enterLinkNth({
+				// TODO ANIMATION
+			})
 		}
 	}
 
@@ -165,16 +166,20 @@ export const Menu = ({ headerRef, isMenuOpen }) => {
 		const imgIndex = [...current.parentNode.parentNode.children].indexOf(current.parentNode)
 
 		const imgTemp = imgListRef.querySelectorAll('img')[imgIndex]
-		const contactWrapperTemp = contactWrapperRef
 
-		gsap.set(imgListRef.querySelectorAll('img'), { autoAlpha: 0 })
-		gsap.set([excludedLinks], { autoAlpha: 1 })
+		leaveLink({
+			activeLink: current,
+			excludedLinks: excludedLinks,
+			activeImg: imgTemp
+		})
 
 		const timeout = setTimeout(() => {
-			gsap.set(imgTemp, { autoAlpha: 0 })
-			gsap.set(contactWrapperTemp, { autoAlpha: 1 })
 			setPauseCanvas(true)
 			setLinkTimeout(null)
+
+			leaveLinkTimeout({
+				// TODO ANIMATION
+			})
 		}, 2000)
 
 		setLinkTimeout(timeout)
@@ -194,9 +199,9 @@ export const Menu = ({ headerRef, isMenuOpen }) => {
 			el.getAttribute('data-index') !== current.getAttribute('data-index') && el)
 			.filter(el => el !== false)
 
-		gsap.set([excludedLinks], { autoAlpha: 1 })
-		gsap.set(imgListRef.querySelectorAll('img'), { autoAlpha: 0 })
-		gsap.set(contactWrapperRef, { autoAlpha: 1 })
+		leaveLinkList({
+			// TODO ANIMATION
+		})
 	}
 
 	const data_mail = 'contact@company.com'

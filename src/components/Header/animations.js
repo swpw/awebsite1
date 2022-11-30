@@ -359,24 +359,6 @@ export const enterLinkFirst = ({
 			duration: .7,
 			ease: Power3.easeInOut
 		}, 'first')
-	// .fromTo(inactiveIndexSpans, {
-	// 	clipPath: 'inset(0% 0% 0% 0%)',
-	// }, {
-	// 	clipPath: 'inset(100% 0% 0% 0%)',
-	// 	duration: .7,
-	// 	delay: .2,
-	// 	ease: Power3.easeInOut
-	// }, 'first')
-	// .fromTo(excludedLinkSpans, {
-	// 	// yPercent: 0,
-	// 	clipPath: 'inset(0% 0% 0% 0%)',
-	// }, {
-	// 	// yPercent: 100,
-	// 	clipPath: 'inset(100% 0% 0% 0%)',
-	// 	duration: .7,
-	// 	delay: .2,
-	// 	ease: Power3.easeInOut
-	// }, 'first')
 
 	// img
 	tl
@@ -414,4 +396,29 @@ export const enterLinkFirst = ({
 			stagger: .03,
 			ease: Power3.easeInOut,
 		}, 'first')
+}
+
+export const enterLinkNth = ({ data }) => {
+	// gsap.set(excludedLinks, { autoAlpha: 0 })
+	// gsap.set(imgListRef.querySelectorAll('img')[imgIndex], { autoAlpha: 1 })
+}
+
+export const leaveLink = ({
+	activeLink,
+	excludedLinks,
+	activeImg,
+}) => {
+	// gsap.set(imgListRef.querySelectorAll('img'), { autoAlpha: 0 })
+	// gsap.set([excludedLinks], { autoAlpha: 1 })
+}
+
+export const leaveLinkTimeout = ({ data }) => {
+	// gsap.set(imgTemp, { autoAlpha: 0 })
+	// gsap.set(contactWrapperTemp, { autoAlpha: 1 })
+}
+
+export const leaveLinkList = ({ data }) => {
+	// gsap.set([excludedLinks], { autoAlpha: 1 })
+	// gsap.set(imgListRef.querySelectorAll('img'), { autoAlpha: 0 })
+	// gsap.set(contactWrapperRef, { autoAlpha: 1 })
 }
