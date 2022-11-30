@@ -44,7 +44,7 @@ export const Header = () => {
 
   // Hide menu when path changes
   useEffect(() =>
-    setIsMenuOpen({ state: false, clicked: false }), [location])
+    setIsMenuOpen({ state: false, clicked: true }), [location])
 
   // Change nav color when open
   useEffect(() => {

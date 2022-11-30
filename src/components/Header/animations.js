@@ -76,11 +76,11 @@ export const gsap_revealHeader = target => {
 	})
 }
 
-export const gsap_openMenu = ({ menu, container, links_list, link_itemName, link_name, link_spanName, mail, phone, address, socials }) => {
+export const gsap_openMenu = ({ menu, container, links_list, link_itemName, link_name, link_spanIndex, link_spanName, mail, phone, address, socials }) => {
 	const links = links_list.querySelectorAll(`.${link_name}`)
+	const linksIndex = links_list.querySelectorAll(`.${link_spanIndex}`)
 	const linksSpan = links_list.querySelectorAll(`.${link_spanName}`)
 
-	const pseudoLinkIndex = CSSRulePlugin.getRule(`.${link_name}::before`)
 	const pseudoLinkMenu = CSSRulePlugin.getRule(`.${link_itemName}:first-child .${link_name}::after`)
 	const pseudoLinkSpan = CSSRulePlugin.getRule(`.${link_spanName}::before`)
 	const pseudoMailSpan = CSSRulePlugin.getRule(`.${mail.querySelector('span').className}::before`)
@@ -118,7 +118,7 @@ export const gsap_openMenu = ({ menu, container, links_list, link_itemName, link
 			duration: .5,
 			ease: Power3.easeInOut
 		}, 'second')
-		.fromTo(pseudoLinkIndex, {
+		.fromTo(linksIndex, {
 			clipPath: 'inset(0% 100% 0% 0%)',
 		}, {
 			clipPath: 'inset(0% 0% 0% 0%)',
@@ -303,4 +303,115 @@ export const changeNavColor = ({ state, logo, link, button }) => {
 			duration: .5,
 			ease: Power3.easeOut,
 		})
+}
+
+export const enterLinkFirst = ({
+	activeLink,
+	linkList,
+	excludedLinks,
+	linkSpanIndex,
+	linkSpanName,
+	imgList,
+	activeImg,
+	mail,
+	phone,
+	address,
+	socials,
+}) => {
+	// excludedLinks.
+	const indexOfactiveLink = linkList.findIndex((el, i) => el === activeLink && i)
+	const inactiveIndexSpans = linkList.map(el => el !== activeLink && el.querySelector(`.${linkSpanIndex}`)).filter(el => el)
+	const excludedLinkSpans = linkList.map(el => el !== activeLink && el.querySelector(`.${linkSpanName}`)).filter(el => el)
+	const isLastItem = linkList.length - 1 === indexOfactiveLink
+
+	activeLink = activeLink.querySelector(`.${linkSpanName}`)
+	const pseudoLinkSpan = CSSRulePlugin.getRule(`.${linkSpanName}::before`)
+
+	// const pseudoLinkIndex = CSSRulePlugin.getRule(`.${link_name}::before`)
+	// const pseudoLinkMenu = CSSRulePlugin.getRule(`.${link_itemName}:first-child .${link_name}::after`)
+
+	// const pseudoMailSpan = CSSRulePlugin.getRule(`.${mail.querySelector('span').className}::before`)
+	// const pseudoPhoneSpan = CSSRulePlugin.getRule(`.${phone.querySelector('span').className}::before`)
+	// const pseudoAddressSpan = CSSRulePlugin.getRule(`.${address.querySelector('span').className}::before`)
+
+	// Links
+	const tl = gsap.timeline()
+		.set(activeLink, { color: '#fff', zIndex: 2 })
+		.set(imgList, { zIndex: 1 })
+		.set([inactiveIndexSpans, excludedLinkSpans], { color: 'rgba(255 255 255 / 0.02)' })
+		.fromTo(activeLink, {
+			yPercent: 0,
+		}, {
+			yPercent: () => !isLastItem ? 100 : -100,
+			duration: .5,
+			ease: Power3.easeIn,
+		}, 'first')
+		.fromTo(activeLink, {
+			yPercent: () => !isLastItem ? -100 : 100,
+		}, {
+			yPercent: 0,
+			duration: .5,
+			delay: .5,
+			ease: Power3.easeOut,
+		}, 'first')
+		.to(pseudoLinkSpan, {
+			clipPath: 'inset(0% 100% 0% 0%)',
+			duration: .7,
+			ease: Power3.easeInOut
+		}, 'first')
+	// .fromTo(inactiveIndexSpans, {
+	// 	clipPath: 'inset(0% 0% 0% 0%)',
+	// }, {
+	// 	clipPath: 'inset(100% 0% 0% 0%)',
+	// 	duration: .7,
+	// 	delay: .2,
+	// 	ease: Power3.easeInOut
+	// }, 'first')
+	// .fromTo(excludedLinkSpans, {
+	// 	// yPercent: 0,
+	// 	clipPath: 'inset(0% 0% 0% 0%)',
+	// }, {
+	// 	// yPercent: 100,
+	// 	clipPath: 'inset(100% 0% 0% 0%)',
+	// 	duration: .7,
+	// 	delay: .2,
+	// 	ease: Power3.easeInOut
+	// }, 'first')
+
+	// img
+	tl
+		.fromTo(imgList, {
+			clipPath: () => !isLastItem ? 'inset(0% 0% 100% 0%)' : 'inset(100% 0% 0% 0%)',
+		}, {
+			clipPath: 'inset(0% 0% 0% 0%)',
+			duration: 1,
+			ease: Power3.easeInOut,
+		}, 'first')
+		.fromTo(activeImg, {
+			scale: 1.5,
+			autoAlpha: 0,
+		}, {
+			autoAlpha: 1,
+			scale: 1,
+			duration: 1.3,
+			ease: Power3.easeInOut,
+		}, 'first')
+
+	// socials
+	tl
+		.to([mail, phone, address], {
+			autoAlpha: 0,
+			yPercent: 100,
+			duration: 1,
+			stagger: .05,
+			ease: Power3.easeInOut,
+		}, 'first')
+		.to(socials, {
+			autoAlpha: 0,
+			yPercent: 40,
+			duration: 1,
+			delay: .15,
+			stagger: .03,
+			ease: Power3.easeInOut,
+		}, 'first')
 }

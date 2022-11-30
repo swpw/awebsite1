@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom';
 import css from './Menu.module.scss'
 
-import { gsap_openMenu, gsap_closeMenu } from './animations';
+import { gsap_openMenu, gsap_closeMenu, enterLinkFirst } from './animations';
 import { getRoutes } from '../../hooks/getRoutes'
 import { CanvasHandler } from './canvasHandler';
 import { romanize } from '../../hooks/romanize'
@@ -42,6 +42,7 @@ export const Menu = ({ headerRef, isMenuOpen }) => {
 			links_list: linksListRef,
 			link_itemName: css.linkItem,
 			link_name: css.link,
+			link_spanIndex: css.linkIndex,
 			link_spanName: css.linkSpan,
 			mail: mailRef,
 			phone: phoneRef,
@@ -129,8 +130,20 @@ export const Menu = ({ headerRef, isMenuOpen }) => {
 		const imgIndex = [...current.parentNode.parentNode.children].indexOf(current.parentNode)
 
 		if (linkEntry.nthEntry === 0) {
-			gsap.set([excludedLinks, contactWrapperRef], { autoAlpha: 0 })
-			gsap.set(imgListRef.querySelectorAll('img')[imgIndex], { autoAlpha: 1 })
+			enterLinkFirst({
+				activeLink: current,
+				linkList: links.current,
+				excludedLinks: excludedLinks,
+				linkSpanIndex: css.linkIndex,
+				linkSpanName: css.linkSpan,
+				imgList: imgListRef,
+				activeImg: imgListRef.querySelectorAll('img')[imgIndex],
+				mail: mailRef,
+				phone: phoneRef,
+				address: addressRef,
+				socials: socialsListRef
+			})
+
 			setPauseCanvas(false)
 		} else {
 			clearTimeout(linkTimeout)
@@ -249,7 +262,8 @@ export const Menu = ({ headerRef, isMenuOpen }) => {
 						{
 							getRoutes().map(({ path, Component: { name }, title }, index) => (
 								<li className={css.linkItem} key={name}>
-									<Link data-index={romanize(index + 1)} className={css.link} to={path}>
+									<Link data-index={index + 1} className={css.link} to={path}>
+										<span className={css.linkIndex}>{romanize(index + 1)}</span>
 										<span className={css.linkSpanWrapper}>
 											<span data-text={title} className={css.linkSpan}>{title}</span>
 										</span>
