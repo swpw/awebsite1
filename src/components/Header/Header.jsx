@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation, Link } from 'react-router-dom';
 import css from './Header.module.scss'
-import { gsap } from "gsap";
 
 import { Menu } from './Menu';
 import { Button } from './Button';
+import { isPageLoaded } from '../../context/Loader';
 
 import { gsap_fouc, gsap_revealHeader, gsap_headerLinkHover, changeNavColor } from './animations';
 import SplitTextJS from 'split-text-js';
@@ -18,6 +18,8 @@ export const Header = () => {
   })
   const [splittedText, setSplittedText] = useState({})
 
+  const pageLoaded = isPageLoaded();
+
   let headerRef = useRef(null)
   let headerLinkRef = useRef(null)
   let logoRef = useRef(null)
@@ -30,7 +32,9 @@ export const Header = () => {
   const handleLinkLeave = ({ target }) =>
     gsap_headerLinkHover(splittedText, setSplittedText, true)
 
+  // load event finished
   useEffect(() => {
+    if (!pageLoaded) return
     // Avoid 'flash of unstyled content' (FOUC) 
     gsap_fouc(headerRef.current)
     // Reveal Menu from outside of page view
@@ -40,7 +44,7 @@ export const Header = () => {
       timeline: [],
       target: new SplitTextJS(headerLinkRef),
     })
-  }, [])
+  }, [pageLoaded])
 
   // Hide menu when path changes
   useEffect(() =>
